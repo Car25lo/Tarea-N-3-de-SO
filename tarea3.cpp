@@ -59,7 +59,7 @@ class simDisc{
     int totalbloq;
     Mecanismo mec2;
     int min_arch_kb;
-    int max_arch_b;
+    int max_arch_kb;
     vector<bloque> bloques;
     mt19937 rng;
     
@@ -125,6 +125,50 @@ class simDisc{
         ++muestras_frag;
     }
     
+    void mapa(){
+        if(totalbloq >150) return; 
+        cout<< " mapa: ";
+        for(int i=0; i< bloques.size(); i++){
+            if(bloques[i].id_arch <0) cout <<".";
+            else{
+                cout << (char)bloques[i].tipo << endl;
+            }
+
+        }
+    }
+    string nombmec(){
+          return mec2 == contigua ? "Contigua" : mec2 == enlazada ? "Enlazada" : "Indexada";
+    }
+    void detener( string &m){
+        cout << "se detuvo la simulación"<< endl;
+        act=false;
+        cv.notify_all();
+
+    }
+    bool crearArch(){
+
+        long long tam_kb= aleatorio(min_arch_kb,max_arch_kb);
+        long long tam_b= tam_kb*1024;
+        long long dato, ind=0;
+        
+        if (mec2 == enlazada){
+
+            long long util=bloq_b-bytes_p;
+            dato=(tam_b+util-1)/util;
+            
+        }
+        else {
+            dato=(tam_b+bloq_b-1)/bloq_b;
+        }
+     
+    if(dato<1)dato=1;
+    if(mec2==indexada){
+        long long ptr=bloq_b/bytes_p;
+        ind=(dato+ptr-1)/ptr;
+    }
+
+
+    }
 
     public:
     simDisc(int disc_mb, int bloq_kb, Mecanismo mec, int min_kb, int max_kb, uint32_t sem ){
@@ -134,7 +178,7 @@ class simDisc{
     this->totalbloq = (disc_mb*1024)/bloq_kb;
     this->mec2 = mec;
     this->min_arch_kb = min_kb;
-    this->max_arch_b = max_kb;
+    this->max_arch_kb = max_kb;
     this->bloques.resize(this->totalbloq);
     this->rng.seed(sem);
     }
