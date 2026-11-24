@@ -1,2 +1,2 @@
-# Tarea-N-3-de-SO
-Tarea Nº 3 de la asignatura Sistema Operativo
+# Tarea 3 - Sistema Operativo - Sección 2 (File System)
+Integrantes : Jasson Valverde 
