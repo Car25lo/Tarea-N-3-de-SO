@@ -75,6 +75,7 @@ class simDisc{
 
     chrono::steady_clock::time_point ini;
     bool act=true;
+    string mot=" simulación finalizada";
 
     mutex mtx;
     condition_variable cv;
@@ -139,7 +140,7 @@ class simDisc{
     string nombmec(){
           return mec2 == contigua ? "Contigua" : mec2 == enlazada ? "Enlazada" : "Indexada";
     }
-    void detener( string &m){
+    void detener( const string &m){
         cout << "se detuvo la simulación"<< endl;
         act=false;
         cv.notify_all();
@@ -166,6 +167,48 @@ class simDisc{
         long long ptr=bloq_b/bytes_p;
         ind=(dato+ptr-1)/ptr;
     }
+    long long n_tot= dato+ ind;
+    int lib= libres();
+    if(lib<n_tot){
+        detener("espacio insuficiente: se requieren" + to_string(n_tot)+ "bloques de "+ to_string(tam_kb)+ "KB y solo hay " + to_string(lib)+ "Libres.");
+        return false;
+
+    }
+
+    int inicio_c=-1;
+    if(mec2== contigua){
+    int seg, des =0;
+        for (int i =0; i<totalbloq; i++ ){
+            if(bloques[i].id_arch==-1){
+                if(seg == 0) des=1;
+                if(seg++ ==n_tot){
+                    inicio_c=des; 
+                    break;
+                }
+            
+            }
+            else{
+            seg=0;
+
+            }
+        }
+        if(inicio_c < 0){
+
+            detener("Fragmentacion externa impide asignacion contigua: se requieren " + to_string(n_tot) + " bloques seguidos (" + to_string(tam_kb) + 
+            " KB y el mayor hueco es de " + to_string(mayorHueco()) + " bloques.");
+
+            return false;
+
+
+        }
+        
+    }
+    archivo a;
+    a.id= total_creados;
+    a.nom="archivo "+ to_string(a.id+1)+".dat";
+    
+
+    
 
 
     }
